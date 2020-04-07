@@ -2,7 +2,6 @@ const container = document.createElement('div');
 const input = document.createElement('textarea');
 const keyboard = document.createElement('div');
 
-
 let modifierLanguage;
 if (localStorage.getItem('lang') === undefined) {
   modifierLanguage = 'en';
@@ -11,8 +10,7 @@ if (localStorage.getItem('lang') === undefined) {
 }
 
 let modifierCapsLock = false;
-
-input.setAttribute('readonly', 'true');
+let currentPosition = 0;
 
 container.style.margin = '50px 240px';
 input.classList.add('input');
@@ -307,6 +305,39 @@ class Button {
   }
 }
 
+const changeCurrentPosition = () => {
+  input.focus();
+  if (input.selectionStart) {
+    currentPosition = input.selectionStart;
+  } else {
+    currentPosition = 0;
+  }
+};
+
+const addText = (text) => {
+  const oldText = input.value.substring(currentPosition, input.value.length);
+  input.value = input.value.substring(0, currentPosition) + text + oldText;
+  currentPosition += text.length;
+
+  input.focus();
+  input.setSelectionRange(currentPosition, currentPosition);
+};
+
+const removeText = (modifier) => {
+  if (modifier === 'backspace' && currentPosition >= 1) {
+    const oldText = input.value.substring(currentPosition, input.value.length);
+    input.value = input.value.substring(0, currentPosition - 1) + oldText;
+    currentPosition -= 1;
+  }
+  if (modifier === 'Delete') {
+    const oldText = input.value.substring(currentPosition + 1, input.value.length);
+    input.value = input.value.substring(0, currentPosition) + oldText;
+  }
+
+  input.focus();
+  input.setSelectionRange(currentPosition, currentPosition);
+};
+
 function createKeyboard() {
   for (let i = 0; i < keysDefault.length; i += 1) {
     const button = new Button(keysDefault[i]);
@@ -320,18 +351,6 @@ function createKeyboard() {
     keyboard.append(button.getElement());
   }
 }
-
-const onShiftHandler = (event) => {
-  if (event.type === 'mousedown' || event.type === 'keydown') {
-    for (let i = 17; i < keyboardButtons.length; i += 1) {
-      keyboardButtons[i].elementButton.innerHTML = keyboardButtons[i].secondValue;
-    }
-  } else {
-    for (let i = 17; i < keyboardButtons.length; i += 1) {
-      keyboardButtons[i].elementButton.innerHTML = keyboardButtons[i].firstValue;
-    }
-  }
-};
 
 function keyboardChangeCase(modifier) {
   if (modifierLanguage === 'ru') {
@@ -376,6 +395,24 @@ function keyboardChangeCase(modifier) {
   });
 }
 
+const onShiftHandler = (event) => {
+  if (event.type === 'mousedown' || event.type === 'keydown') {
+    for (let i = 17; i < keyboardButtons.length; i += 1) {
+      keyboardButtons[i].elementButton.innerHTML = keyboardButtons[i].secondValue;
+    }
+    if (modifierCapsLock) {
+      keyboardChangeCase();
+    }
+  } else {
+    for (let i = 17; i < keyboardButtons.length; i += 1) {
+      keyboardButtons[i].elementButton.innerHTML = keyboardButtons[i].firstValue;
+    }
+    if (modifierCapsLock) {
+      keyboardChangeCase('upperCase');
+    }
+  }
+};
+
 const capsLockHandler = () => {
   if (
     document
@@ -391,25 +428,27 @@ const capsLockHandler = () => {
 };
 
 function virtualKeyboardHandler(event) {
+  event.preventDefault();
+
   if (event.target.classList.contains('button')) {
     event.target.classList.toggle('button_active');
 
     if (modifierLanguage === 'en') {
       keysEng.forEach((key) => {
         if (
-          event.type === 'mousedown'
-              && key.firstValue === event.target.innerHTML.toLowerCase()
+          (event.type === 'mousedown' && key.firstValue === event.target.innerText.toLowerCase()) || (event.type === 'mousedown'
+              && key.secondValue === event.target.innerText.toLowerCase())
         ) {
-          input.textContent += event.target.innerHTML;
+          addText(event.target.innerText);
         }
       });
     } else {
       keysRus.forEach((key) => {
         if (
-          event.type === 'mousedown'
-              && key.firstValue === event.target.innerHTML.toLowerCase()
+          (event.type === 'mousedown' && key.firstValue === event.target.innerText.toLowerCase()) || (event.type === 'mousedown'
+              && key.secondValue === event.target.innerText.toLowerCase())
         ) {
-          input.textContent += event.target.innerHTML;
+          addText(event.target.innerHTML);
         }
       });
     }
@@ -417,31 +456,31 @@ function virtualKeyboardHandler(event) {
     if (event.type === 'mousedown') {
       switch (event.target.innerHTML) {
         case 'Space':
-          input.textContent += ' ';
+          addText(' ');
           break;
         case '←':
-          input.textContent = input.textContent
-            .split('')
-            .slice(0, input.textContent.split('').length - 1)
-            .join('');
+          removeText('backspace');
           break;
         case 'Tab':
-          input.textContent += '   ';
+          addText('   ');
           break;
         case '⇑':
-          input.textContent += '▲';
+          addText('▲');
           break;
         case '⇒':
-          input.textContent += '►';
+          addText('►');
           break;
         case '⇓':
-          input.textContent += '▼';
+          addText('▼');
           break;
         case '⇐':
-          input.textContent += '◄';
+          addText('◄');
           break;
         case 'Enter':
-          input.textContent += '\n';
+          addText('\n');
+          break;
+        case 'Delete':
+          removeText('Delete');
           break;
         default:
           break;
@@ -509,8 +548,8 @@ if (modifierLanguage === 'ru') {
   changeLanguage();
 }
 
-
 function physicalKeyboardHandler(event) {
+  event.preventDefault();
   keyboardButtons.forEach((button) => {
     if (
       button.keyCode === event.code
@@ -520,8 +559,7 @@ function physicalKeyboardHandler(event) {
         && button.keyCode !== 'MetaLeft'
     ) {
       if (!button.elementButton.classList.contains('button_active')) {
-        document.querySelector('.input').innerHTML
-            += button.elementButton.innerHTML;
+        addText(button.elementButton.innerText);
       }
     }
     if (button.keyCode === event.code && event.type === 'keydown') {
@@ -541,47 +579,45 @@ function physicalKeyboardHandler(event) {
         break;
       case 'Backspace':
         event.preventDefault();
-        input.textContent = input.textContent
-          .split('')
-          .slice(0, input.textContent.split('').length - 1)
-          .join('');
+        removeText('backspace');
         break;
       case 'Tab':
         event.preventDefault();
-        input.textContent += '   ';
+        addText('   ');
         break;
       case 'ArrowUp':
         event.preventDefault();
-        input.textContent += '▲';
+        addText('▲');
         break;
       case 'ArrowDown':
         event.preventDefault();
-        input.textContent += '▼';
+        addText('▼');
         break;
       case 'ArrowLeft':
         event.preventDefault();
-        input.textContent += '◄';
+        addText('◄');
         break;
       case 'ArrowRight':
         event.preventDefault();
-        input.textContent += '►';
+        addText('►');
         break;
       case 'Enter':
         event.preventDefault();
-        input.textContent += '\n';
+        addText('\n');
         break;
       case 'MetaLeft':
         event.preventDefault();
         break;
       case 'Delete':
         event.preventDefault();
+        removeText('Delete');
         break;
       default:
         break;
     }
     if (event.code === 'Space') {
       event.preventDefault();
-      input.textContent += ' ';
+      addText(' ');
     }
   }
 
@@ -608,10 +644,6 @@ function physicalKeyboardHandler(event) {
         && document
           .querySelector('.button_altleft')
           .classList.contains('button_active'))
-      || (event.code === 'ControlRight'
-        && document
-          .querySelector('.button_altright')
-          .classList.contains('button_active'))
   ) {
     changeLanguage();
   }
@@ -619,8 +651,9 @@ function physicalKeyboardHandler(event) {
 
 document.addEventListener('keydown', physicalKeyboardHandler);
 document.addEventListener('keyup', physicalKeyboardHandler);
+input.addEventListener('mouseup', changeCurrentPosition);
 
 document.body.insertAdjacentHTML(
   'beforeend',
-  '<p>Клавиатура создана в ОС Windows</p><p>Для переключения языка комбинация: левыe или правые ctrl + alt</p>',
+  '<p style="margin: 50px 240px 0;">Клавиатура создана в ОС Windows</p><p style="margin: 10px 240px;">Для переключения языка комбинация: левыe ctrl + alt</p>',
 );
