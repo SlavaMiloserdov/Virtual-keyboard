@@ -5,7 +5,9 @@
   "main": "script.js",
   "scripts": {
     "style": "sass --watch sass/style.scss sass/style.css",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix"
   },
   "repository": {
     "type": "git",
@@ -16,5 +18,15 @@
   "bugs": {
     "url": "https://github.com/SlavaMiloserdov/Virtual-keyboard-new/issues"
   },
-  "homepage": "https://github.com/SlavaMiloserdov/Virtual-keyboard-new#readme"
+  "homepage": "https://github.com/SlavaMiloserdov/Virtual-keyboard-new#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-html": "^6.0.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^2.0.4"
+  }
 }
