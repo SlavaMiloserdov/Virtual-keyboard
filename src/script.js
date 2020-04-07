@@ -11,6 +11,7 @@ if (localStorage.getItem('lang') === undefined) {
 
 let modifierCapsLock = false;
 let currentPosition = 0;
+let previousButton;
 
 container.style.margin = '50px 240px';
 input.classList.add('input');
@@ -427,17 +428,18 @@ const capsLockHandler = () => {
   }
 };
 
-function virtualKeyboardHandler(event) {
+function virtualKeyboardMouseDownHandler(event) {
   event.preventDefault();
 
   if (event.target.classList.contains('button')) {
     event.target.classList.toggle('button_active');
+    previousButton = event.target;
 
     if (modifierLanguage === 'en') {
       keysEng.forEach((key) => {
         if (
-          (event.type === 'mousedown' && key.firstValue === event.target.innerText.toLowerCase()) || (event.type === 'mousedown'
-              && key.secondValue === event.target.innerText.toLowerCase())
+          (key.firstValue === event.target.innerText.toLowerCase())
+          || (key.secondValue === event.target.innerText.toLowerCase())
         ) {
           addText(event.target.innerText);
         }
@@ -445,64 +447,67 @@ function virtualKeyboardHandler(event) {
     } else {
       keysRus.forEach((key) => {
         if (
-          (event.type === 'mousedown' && key.firstValue === event.target.innerText.toLowerCase()) || (event.type === 'mousedown'
-              && key.secondValue === event.target.innerText.toLowerCase())
+          (key.firstValue === event.target.innerText.toLowerCase())
+          || (key.secondValue === event.target.innerText.toLowerCase())
         ) {
           addText(event.target.innerHTML);
         }
       });
     }
 
-    if (event.type === 'mousedown') {
-      switch (event.target.innerHTML) {
-        case 'Space':
-          addText(' ');
-          break;
-        case '←':
-          removeText('backspace');
-          break;
-        case 'Tab':
-          addText('   ');
-          break;
-        case '⇑':
-          addText('▲');
-          break;
-        case '⇒':
-          addText('►');
-          break;
-        case '⇓':
-          addText('▼');
-          break;
-        case '⇐':
-          addText('◄');
-          break;
-        case 'Enter':
-          addText('\n');
-          break;
-        case 'Delete':
-          removeText('Delete');
-          break;
-        default:
-          break;
-      }
+    switch (event.target.innerHTML) {
+      case 'Space':
+        addText(' ');
+        break;
+      case '←':
+        removeText('backspace');
+        break;
+      case 'Tab':
+        addText('   ');
+        break;
+      case '⇑':
+        addText('▲');
+        break;
+      case '⇒':
+        addText('►');
+        break;
+      case '⇓':
+        addText('▼');
+        break;
+      case '⇐':
+        addText('◄');
+        break;
+      case 'Enter':
+        addText('\n');
+        break;
+      case 'Delete':
+        removeText('Delete');
+        break;
+      default:
+        break;
     }
     if (event.target.innerHTML === 'Shift') {
       onShiftHandler(event);
     }
-    if (event.type === 'mouseup' && event.target.innerHTML === 'CapsLock') {
-      document
-        .querySelector('.button_capslock')
-        .classList.toggle('button_active');
-      capsLockHandler();
-    }
   }
 }
+
+const virtualKeyboardMouseUpHandler = (event) => {
+  if (event.target.innerHTML === 'CapsLock') {
+    capsLockHandler();
+    return;
+  }
+  if (event.target.innerHTML === 'Shift' || previousButton.innerHTML === 'Shift') {
+    onShiftHandler(event);
+  }
+  previousButton.classList.remove('button_active');
+};
 
 createKeyboard();
 keyboard.classList.add('keyboard');
 
-keyboard.addEventListener('mousedown', virtualKeyboardHandler);
-keyboard.addEventListener('mouseup', virtualKeyboardHandler);
+keyboard.addEventListener('mousedown', virtualKeyboardMouseDownHandler);
+keyboard.addEventListener('mouseup', virtualKeyboardMouseUpHandler);
 
 container.append(input);
 container.append(keyboard);
