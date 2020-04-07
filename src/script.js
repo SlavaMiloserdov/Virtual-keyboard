@@ -397,7 +397,11 @@ function keyboardChangeCase(modifier) {
 }
 
 const onShiftHandler = (event) => {
-  if (event.type === 'mousedown' || event.type === 'keydown') {
+  let countActiveShift = 0;
+  countActiveShift += document.querySelector('.button_shiftleft').classList.contains('button_active');
+  countActiveShift += document.querySelector('.button_shiftright').classList.contains('button_active');
+
+  if ((event.type === 'mousedown' && countActiveShift !== 2) || (event.type === 'keydown' && countActiveShift !== 2)) {
     for (let i = 17; i < keyboardButtons.length; i += 1) {
       keyboardButtons[i].elementButton.innerHTML = keyboardButtons[i].secondValue;
     }
@@ -411,6 +415,8 @@ const onShiftHandler = (event) => {
     if (modifierCapsLock) {
       keyboardChangeCase('upperCase');
     }
+    document.querySelector('.button_shiftleft').classList.remove('button_active');
+    document.querySelector('.button_shiftright').classList.remove('button_active');
   }
 };
 
