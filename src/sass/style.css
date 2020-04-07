@@ -1,0 +1,175 @@
+.button {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #0000006e;
+  border-radius: 8px;
+  margin: 1px;
+  background-color: #9ab3dec2;
+  -webkit-box-shadow: 0 0 3px 0 black;
+          box-shadow: 0 0 3px 0 black;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.button_active {
+  background: radial-gradient(circle, #22c1c3 0%, #fd2d35 100%);
+}
+
+.button_backspace {
+  width: 100px;
+  -ms-grid-row: 1;
+  -ms-grid-column: 14;
+  -ms-grid-column-span: 2;
+  grid-area: backspace;
+}
+
+.button_tab {
+  width: 50px;
+  -ms-grid-row: 2;
+  -ms-grid-column: 1;
+  grid-area: tab;
+}
+
+.button_delete {
+  -ms-grid-row: 2;
+  -ms-grid-column: 15;
+  grid-area: delete;
+}
+
+.button_capslock {
+  width: 100px;
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 2;
+  grid-area: capslock;
+}
+
+.button_enter {
+  width: 100px;
+  -ms-grid-row: 3;
+  -ms-grid-column: 14;
+  -ms-grid-column-span: 2;
+  grid-area: enter;
+}
+
+.button_shiftleft,
+.button_shiftright {
+  width: 100px;
+}
+
+.button_shiftleft {
+  -ms-grid-row: 4;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 2;
+  grid-area: shiftLeft;
+}
+
+.button_shiftright {
+  -ms-grid-row: 4;
+  -ms-grid-column: 14;
+  -ms-grid-column-span: 2;
+  grid-area: shiftRight;
+}
+
+.button_arrowup {
+  -ms-grid-row: 4;
+  -ms-grid-column: 13;
+  grid-area: arrowUp;
+}
+
+.button_arrowleft {
+  -ms-grid-row: 5;
+  -ms-grid-column: 12;
+  grid-area: arrowLeft;
+}
+
+.button_arrowdown {
+  -ms-grid-row: 5;
+  -ms-grid-column: 13;
+  grid-area: arrowDown;
+}
+
+.button_arrowright {
+  -ms-grid-row: 5;
+  -ms-grid-column: 14;
+  grid-area: arrowRight;
+}
+
+.button_win {
+  -ms-grid-row: 5;
+  -ms-grid-column: 2;
+  grid-area: win;
+}
+
+.button_altleft {
+  -ms-grid-row: 5;
+  -ms-grid-column: 3;
+  grid-area: altLeft;
+}
+
+.button_altright {
+  -ms-grid-row: 5;
+  -ms-grid-column: 11;
+  grid-area: altRight;
+}
+
+.button_ctrlleft {
+  -ms-grid-row: 5;
+  -ms-grid-column: 1;
+  grid-area: controlLeft;
+}
+
+.button_ctrlright {
+  -ms-grid-row: 5;
+  -ms-grid-column: 15;
+  grid-area: controlRight;
+}
+
+.button_space {
+  width: 377px;
+  -ms-grid-row: 5;
+  -ms-grid-column: 4;
+  -ms-grid-column-span: 7;
+  grid-area: space;
+}
+
+.keyboard {
+  width: 800px;
+  display: -ms-grid;
+  display: grid;
+      grid-template-areas: "button1 button2 button3 button4 button5 button6 button7 button8 button9 button10 button11 button12 button13 backspace backspace" "tab button14 button15 button16 button17 button18 button19 button20 button21 button22 button23 button24 button25 button26 delete" "capslock capslock button27 button28 button29 button30 button31 button32 button33 button34 button35 button36 button37 enter enter" "shiftLeft shiftLeft button38 button39 button40 button41 button42 button43 button44 button45 button46 button47 arrowUp shiftRight shiftRight" "controlLeft win altLeft space space space space space space space altRight arrowLeft arrowDown arrowRight controlRight";
+  border: 4px solid #51827a;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 2px;
+  -webkit-animation: 5s linear 0s infinite alternate move_background;
+          animation: 5s linear 0s infinite alternate move_background;
+}
+
+@-webkit-keyframes move_background {
+  from {
+    background: linear-gradient(217deg, rgba(255, 0, 0, 0.8), rgba(255, 0, 0, 0) 70.71%), linear-gradient(127deg, rgba(0, 255, 0, 0.8), rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, rgba(0, 0, 255, 0.8), rgba(0, 0, 255, 0) 70.71%);
+  }
+  to {
+    background: linear-gradient(250deg, rgba(255, 0, 0, 0.8), rgba(255, 0, 0, 0.151) 70.71%), linear-gradient(150deg, rgba(0, 255, 0, 0.8), rgba(214, 147, 70, 0.788) 70.71%);
+  }
+}
+
+@keyframes move_background {
+  from {
+    background: linear-gradient(217deg, rgba(255, 0, 0, 0.8), rgba(255, 0, 0, 0) 70.71%), linear-gradient(127deg, rgba(0, 255, 0, 0.8), rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, rgba(0, 0, 255, 0.8), rgba(0, 0, 255, 0) 70.71%);
+  }
+  to {
+    background: linear-gradient(250deg, rgba(255, 0, 0, 0.8), rgba(255, 0, 0, 0.151) 70.71%), linear-gradient(150deg, rgba(0, 255, 0, 0.8), rgba(214, 147, 70, 0.788) 70.71%);
+  }
+}
+
+.input {
+  width: 800px;
+  height: 200px;
+  font-size: 15px;
+  border: 5px solid darkslategrey;
+}
+/*# sourceMappingURL=style.css.map */
